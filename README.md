@@ -66,6 +66,22 @@ npm run dev
 4. **Спринт 4 — Враги.** Скаты, гарпии, пожиратели энергии, големы. Ночные волны, цикл дня/ночи, голод, смерть.
 5. **Спринт 5 — Шторм и боссы.** Штормы, буревестник, Небесный кит, Древень бурь. LOD, object pooling, балансировка.
 
+## Деплой на Render.com
+
+В корне есть `render.yaml` (Blueprint). Один web-service отдаёт API/Socket.IO и собранный клиент с одного origin.
+
+1. Зайдите в https://dashboard.render.com → **New +** → **Blueprint**.
+2. Подключите репозиторий `Lorenovv/Sky-Shards-multiplayer-3D-survival-roguelike`.
+3. Render прочитает `render.yaml`, создаст сервис `sky-shards` (Node, free, Frankfurt) с командами:
+   - **Build:** `npm install && npm run build`
+   - **Start:** `npm --workspace server run start`
+   - **Health check:** `/health`
+4. Дождитесь первой сборки. Render выдаст URL вида `https://sky-shards-XXXX.onrender.com` — игра доступна сразу.
+
+> Free plan «засыпает» при отсутствии трафика и просыпается при первом запросе (~30 с). Для постоянной работы переключитесь на Starter.
+
+Альтернатива (без `render.yaml`) — создать вручную New Web Service с теми же командами и `NODE_VERSION=20`.
+
 ## Развитие
 
 - Мобильное управление (gamepad/touch)

@@ -3,6 +3,9 @@
 
 import express from "express";
 import http from "node:http";
+import path from "node:path";
+import fs from "node:fs";
+import { fileURLToPath } from "node:url";
 import cors from "cors";
 import { Server } from "socket.io";
 import type { ClientHello, ClientToServer, ServerToClient } from "@sky-shards/shared";
@@ -16,6 +19,20 @@ app.use(cors());
 app.get("/health", (_req, res) => {
   res.json({ ok: true, time: Date.now() });
 });
+
+// Раздача собранного клиента в production.
+// На Render и других одно-сервисных деплоях клиент и сервер живут на одном origin.
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const clientDist = path.resolve(__dirname, "../../client/dist");
+if (fs.existsSync(clientDist)) {
+  console.log(`[server] serving static client from ${clientDist}`);
+  app.use(express.static(clientDist, { maxAge: "1h", index: false }));
+  // SPA fallback — отдаём index.html на любой не-API маршрут.
+  app.get(/^(?!\/(socket\.io|health)).*/, (_req, res) => {
+    res.sendFile(path.join(clientDist, "index.html"));
+  });
+}
 
 const httpServer = http.createServer(app);
 const io: Server<ClientToServer, ServerToClient> = new Server(httpServer, {
