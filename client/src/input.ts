@@ -34,12 +34,16 @@ export class Input {
   private keys = new Set<string>();
   private canvas: HTMLElement;
   private locked = false;
+  private clickToLockEnabled = false;
+  private gameInputEnabled = false;
 
   constructor(canvas: HTMLElement) {
     this.canvas = canvas;
     window.addEventListener("keydown", (e) => this.onKeyDown(e));
     window.addEventListener("keyup", (e) => this.onKeyUp(e));
-    canvas.addEventListener("click", () => this.lock());
+    canvas.addEventListener("click", () => {
+      if (this.clickToLockEnabled) this.lock();
+    });
     document.addEventListener("pointerlockchange", () => {
       this.locked = document.pointerLockElement === this.canvas;
     });
@@ -66,6 +70,13 @@ export class Input {
   lock(): void {
     if (this.locked) return;
     this.canvas.requestPointerLock?.();
+  }
+
+  // Включает захват клавиатуры/мыши только после успешного логина,
+  // чтобы поле имени и кнопки на оверлее работали как обычные input-элементы.
+  enableGameInput(): void {
+    this.gameInputEnabled = true;
+    this.clickToLockEnabled = true;
   }
 
   isLocked(): boolean { return this.locked; }
@@ -104,6 +115,10 @@ export class Input {
   }
 
   private onKeyDown(e: KeyboardEvent): void {
+    if (!this.gameInputEnabled) return;
+    // Не перехватываем нажатия, когда фокус в input/textarea (например, чат).
+    const t = e.target as HTMLElement | null;
+    if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA")) return;
     if (e.repeat) return;
     this.keys.add(e.code);
     this.updateAxes();
@@ -119,6 +134,7 @@ export class Input {
     }
   }
   private onKeyUp(e: KeyboardEvent): void {
+    if (!this.gameInputEnabled) return;
     this.keys.delete(e.code);
     this.updateAxes();
   }

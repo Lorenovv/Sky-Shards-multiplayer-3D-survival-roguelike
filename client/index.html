@@ -7,9 +7,9 @@
   <style>
     html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #0a0c12; color: #e7eaf2; font-family: system-ui, sans-serif; }
     #app { width: 100vw; height: 100vh; position: relative; }
-    canvas { display: block; }
+    canvas { display: block; position: absolute; inset: 0; z-index: 0; }
     #overlay {
-      position: absolute; inset: 0; pointer-events: none;
+      position: absolute; inset: 0; pointer-events: none; z-index: 5;
       display: flex; flex-direction: column; justify-content: space-between; padding: 12px;
     }
     #overlay > * { pointer-events: auto; }
@@ -45,7 +45,7 @@
       position: absolute; inset: 0; display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 14px;
       background: radial-gradient(ellipse at center, #15192a 0%, #060710 100%);
-      pointer-events: auto;
+      pointer-events: auto; z-index: 20;
     }
     #login h1 { font-size: 36px; margin: 0; letter-spacing: 4px; color: #f6c351; }
     #login p { margin: 0; opacity: 0.75; max-width: 480px; text-align: center; }

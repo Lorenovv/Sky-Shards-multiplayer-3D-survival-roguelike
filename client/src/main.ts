@@ -30,6 +30,7 @@ playBtn.addEventListener("click", async () => {
   try {
     await net.connect(name);
     ui.showHud();
+    input.enableGameInput();
     input.lock();
     startGameLoop();
   } catch (err) {

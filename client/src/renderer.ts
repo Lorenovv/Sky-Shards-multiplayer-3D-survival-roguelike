@@ -62,11 +62,12 @@ export class GameRenderer {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.0;
-    document.body.appendChild(renderer.domElement);
+    // Канвас вставляем в #app, ДО оверлея, чтобы оверлей и логин-экран
+    // нормально получали клики (z-index в CSS).
+    const appEl = document.getElementById("app") ?? document.body;
+    appEl.insertBefore(renderer.domElement, appEl.firstChild);
     this.renderer = renderer;
     this.canvas = renderer.domElement;
-    this.canvas.style.position = "absolute";
-    this.canvas.style.inset = "0";
     this.type = kind;
 
     this.scene.background = new THREE.Color(FOG_COLOR);
