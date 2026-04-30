@@ -1,0 +1,21 @@
+# Render Blueprint для Sky Shards.
+# Один web-сервис: Node-бэкенд раздаёт API/Socket.IO + собранный клиент как статику.
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: sky-shards
+    runtime: node
+    region: frankfurt
+    plan: free
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm --workspace server run start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
+      - key: NODE_ENV
+        value: production
+      # SKY_SEED опционально: если не задан, сервер генерирует случайный.
+      # - key: SKY_SEED
+      #   value: 1337

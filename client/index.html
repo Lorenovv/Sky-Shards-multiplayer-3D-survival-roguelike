@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sky Shards</title>
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #0a0c12; color: #e7eaf2; font-family: system-ui, sans-serif; }
+    #app { width: 100vw; height: 100vh; position: relative; }
+    canvas { display: block; position: absolute; inset: 0; z-index: 0; }
+    #overlay {
+      position: absolute; inset: 0; pointer-events: none; z-index: 5;
+      display: flex; flex-direction: column; justify-content: space-between; padding: 12px;
+    }
+    #overlay > * { pointer-events: auto; }
+    #stats { font-size: 12px; opacity: 0.85; }
+    #hud-bottom { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+    #hotbar { display: flex; gap: 6px; }
+    .slot {
+      width: 48px; height: 48px; background: rgba(0, 0, 0, 0.5);
+      border: 2px solid #2c3450; border-radius: 6px; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; color: #cdd5e8;
+    }
+    .slot.selected { border-color: #f6c351; box-shadow: 0 0 8px #f6c35155; }
+    .slot .count { position: absolute; right: 4px; bottom: 2px; font-size: 11px; color: #fff; }
+    #bars { display: flex; flex-direction: column; gap: 4px; min-width: 220px; }
+    .bar { background: rgba(0,0,0,0.5); border: 1px solid #2c3450; border-radius: 4px; height: 14px; position: relative; overflow: hidden; }
+    .bar > div { height: 100%; transition: width .15s linear; }
+    .bar > .label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #fff; text-shadow: 0 0 3px #000; }
+    #anchor-status { position: absolute; top: 12px; right: 12px; text-align: right; font-size: 13px; }
+    #anchor-status.alarm { color: #ff7060; animation: pulse 0.8s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.55 } }
+    #crosshair {
+      position: absolute; left: 50%; top: 50%; width: 4px; height: 4px;
+      transform: translate(-50%, -50%); background: #f6c351; border-radius: 50%;
+      box-shadow: 0 0 6px #f6c35199;
+    }
+    #log {
+      position: absolute; left: 12px; bottom: 80px; max-height: 140px; overflow: hidden;
+      font-size: 12px; line-height: 1.35; color: #b8c1d6;
+    }
+    #log .ev { background: rgba(0,0,0,0.45); padding: 3px 6px; margin-bottom: 2px; border-radius: 3px; }
+    #login {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 14px;
+      background: radial-gradient(ellipse at center, #15192a 0%, #060710 100%);
+      pointer-events: auto; z-index: 20;
+    }
+    #login h1 { font-size: 36px; margin: 0; letter-spacing: 4px; color: #f6c351; }
+    #login p { margin: 0; opacity: 0.75; max-width: 480px; text-align: center; }
+    #login input { background: #1a1f33; color: #e7eaf2; border: 1px solid #303a55; padding: 8px 14px; border-radius: 6px; min-width: 240px; font-size: 14px; }
+    #login button { background: #f6c351; color: #1a1408; border: 0; padding: 10px 22px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+    #login button:hover { filter: brightness(1.1); }
+    #help { font-size: 11px; opacity: 0.55; max-width: 460px; text-align: center; }
+    #renderer-info { position: absolute; right: 12px; bottom: 12px; font-size: 11px; opacity: 0.5; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="overlay" hidden>
+      <div id="stats"></div>
+      <div id="anchor-status"></div>
+      <div id="crosshair"></div>
+      <div id="log"></div>
+      <div id="hud-bottom">
+        <div id="hotbar"></div>
+        <div id="bars">
+          <div class="bar"><div id="hp-fill" style="background:#f24a4a;width:100%"></div><div class="label" id="hp-label">HP</div></div>
+          <div class="bar"><div id="hg-fill" style="background:#7bd56b;width:100%"></div><div class="label" id="hg-label">Голод</div></div>
+          <div class="bar"><div id="air-fill" style="background:#5fc7ff;width:100%"></div><div class="label" id="air-label">Воздух</div></div>
+        </div>
+      </div>
+      <div id="renderer-info"></div>
+    </div>
+    <div id="login">
+      <h1>SKY SHARDS</h1>
+      <p>Острова парят над Бездной. Гравитационный якорь иссякает. Введите имя и попробуйте выжить.</p>
+      <input id="name-input" placeholder="Имя сталкера" maxlength="24" autocomplete="off" />
+      <button id="play-btn">Подключиться</button>
+      <p id="help">WASD — движение, Space — прыжок, Shift — бег, F — планер, ЛКМ — добыча/атака, ПКМ — использование/блок, E — взаимодействие, 1‑5 — слоты, Tab — инвентарь.</p>
+    </div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
